@@ -7,7 +7,6 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     echo 'This is a server not using Windows or macOS!';
 }
 
-
 function createSecret()
 {
     $ga = new PHPGangsta_GoogleAuthenticator();
@@ -44,19 +43,19 @@ function get2FASecret()
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
     session_start();
 
     $email = $_SESSION['email'];
-    // Vorbereiten der SQL-Anweisung
+    // Prepare the SQL statement
     $stmt = $conn->prepare("SELECT twoFASecret FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
 
-    // Ausführen der Anweisung
+    // Execute the statement
     $stmt->execute();
 
-    // Ergebnisse abrufen
+    // Fetch results
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
@@ -80,7 +79,7 @@ function enable2FA()
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
     $email = $_SESSION['email'];
@@ -100,7 +99,7 @@ function disable2FA()
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
     $email = $_SESSION['email'];
@@ -120,7 +119,7 @@ function is2FAEnabled()
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
     $email = $_SESSION['email'];
@@ -132,6 +131,4 @@ function is2FAEnabled()
     $user = $result->fetch_assoc();
     return $user['use2FA'];
 }
-
-
 ?>

@@ -5,22 +5,24 @@ $username = "root";
 $password = "";
 $dbname = "webShopFSI";
 
-// Verbindung zur Datenbank herstellen
+// Establish database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Überprüfen Sie, ob die Verbindung erfolgreich war
+// Check if the connection was successful
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
 $currentUserId = $_SESSION['userId'];
-// Löschen Sie die Daten aus der shoppingCart Tabelle für den aktuellen Benutzer
+
+// Delete data from the shoppingCart table for the current user
 $sql = "DELETE FROM shoppingCart WHERE userID = $currentUserId";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Einträge erfolgreich aus der ShoppingCart-Tabelle gelöscht.";
+    echo "Entries successfully deleted from the shopping cart table.";
 } else {
-    echo "Fehler beim Löschen der Einträge: " . $conn->error;
+    echo "Error while deleting entries: " . $conn->error;
 }
+
 header('Location: ../../views/homepage.php');
 ?>

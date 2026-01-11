@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//Server Connection
+// Server connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -13,27 +13,26 @@ $dbname = "webShopFSI";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Stellen Sie sicher, dass die Benutzer-ID in der Session gespeichert ist
+// Make sure the user ID is stored in the session
 if (!isset($_SESSION['userId'])) {
-    die("Benutzer-ID nicht gefunden");
+    die("User ID not found");
 }
 
 $userId = $_SESSION['userId'];
 
-// SQL-Abfrage, um die Favoriten des Benutzers zu laden
+// SQL query to load the user's favorites
 $sql = "SELECT products.* FROM favorites JOIN products ON favorites.productID = products.productID WHERE favorites.userID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-
-// Überprüfen, ob Ergebnisse vorhanden sind
+// Check if there are results
 if ($result->num_rows > 0) {
-    // Produkte in Produktkarten anzeigen
+    // Display products as product cards
     echo '<div class="product-container" >';
     while ($row = $result->fetch_assoc()) {
         echo '<div class="product-card-text" >';
@@ -45,7 +44,7 @@ if ($result->num_rows > 0) {
         echo '</div>';
         echo '<h4 style="color:black;">' . $row['productName'] . '</h2>';
         echo '<h3>' . $row['price'] . ' €</h1>';
-        echo '<p>zzgl. Versandkosten</p>';
+        echo '<p>plus shipping costs</p>';
         echo '</div>';
     }
     echo '</div>';
@@ -59,15 +58,15 @@ if ($result->num_rows > 0) {
     echo '<br>';
     echo '<br>';
     echo '<br>';
-    echo '<p style="text-align:center;">Aktuell hast du keine Favoriten, schau dir jetzt unsere Produkte an:</p>';
+    echo '<p style="text-align:center;">You currently have no favorites. Take a look at our products:</p>';
     echo '<div style=" display: flex;
     justify-content: center;
     align-items: center;">
     
     <small class="d-block text-right mt-3">
-      <a href="products.php" class="btn btn-outline-dark">zur Atrikelübersicht</a>
+      <a href="products.php" class="btn btn-outline-dark">Go to the product overview</a>
     </small></div>';
 }
 
-// Verbindung schließen
+// Close connection
 $conn->close();

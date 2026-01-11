@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -9,44 +10,44 @@ $dbname = "webShopFSI";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
+
 session_start();
 
-// Holen Sie die aktuelle Benutzer-ID
+// Get the current user ID
 $currentUserId = $_SESSION['userId'];
-// Holen Sie alle Elemente aus der `shoppingCart`-Tabelle für den aktuellen Benutzer
+
+// Fetch all items from the `shoppingCart` table for the current user
 $sql = "SELECT productID, amount FROM shoppingCart WHERE userID = $currentUserId";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    // Durchlaufen Sie alle zurückgegebenen Zeilen
+    // Loop through all returned rows
     while ($row = $result->fetch_assoc()) {
         $productID = $row['productID'];
         $amount = $row['amount'];
 
-        // Überprüfen Sie den Lagerbestand für jedes Produkt
+        // Check stock for each product
         $sql = "SELECT stock FROM products WHERE productID = $productID";
         $stockResult = $conn->query($sql);
         $stockRow = $stockResult->fetch_assoc();
         $stock = $stockRow['stock'];
 
-        // Wenn nicht genügend Produkte auf Lager sind, leiten Sie den Benutzer auf eine Fehlerseite um
+        // If there is not enough stock, redirect the user to an error page
         if ($stock < $amount) {
             header('Location: ../../views/error.php');
             exit();
         }
     }
 } else {
-    echo "Keine Einträge in der ShoppingCart-Tabelle für den aktuellen Benutzer.";
+    echo "No entries found in the shopping cart table for the current user.";
 }
 
-
-
-// Generieren Sie eine zufällige Bestellnummer
+// Generate a random order number
 $orderNumber = rand(1000000000, 9999999999);
 
-// Extrahieren Sie die vollständige Adresse und die Zahlungsmethode aus dem POST-Array
+// Extract the full address and payment method from the POST array
 $fullAddress = $conn->real_escape_string($_POST['fullAddress']);
 $paymentMethod = $conn->real_escape_string($_POST['paymentMethod']);
 $versandart = $conn->real_escape_string($_POST['shippingMethod']);
@@ -55,71 +56,65 @@ $betrag = str_replace(['€', ' '], '', $gesamtBetrag);
 $name = $conn->real_escape_string($_POST['firstName']);
 $email = $conn->real_escape_string($_POST['email']);
 
+$sql = "INSERT INTO transactions (timestamp, userID, orderNumber, adress, paymentMethod)
+        VALUES (CURRENT_TIMESTAMP, $currentUserId, $orderNumber, '$fullAddress', '$paymentMethod')";
 
-$sql = "INSERT INTO transactions (timestamp, userID, orderNumber, adress, paymentMethod) VALUES (CURRENT_TIMESTAMP, $currentUserId, $orderNumber, '$fullAddress', '$paymentMethod')";
-
-// Führen Sie die SQL-Abfrage aus
+// Execute the SQL query
 if ($conn->query($sql) === TRUE) {
-    // Holen Sie die ID des zuletzt eingefügten Datensatzes
+    // Get the ID of the last inserted record
     $last_id = $conn->insert_id;
-    echo "Neuer Eintrag erfolgreich erstellt. Die Transaction ID ist: " . $last_id;
+    echo "New entry created successfully. The transaction ID is: " . $last_id;
 } else {
-    echo "Fehler: " . $sql . "<br>" . $conn->error;
+    echo "Error: " . $sql . "<br>" . $conn->error;
 }
 
-// Holen Sie die aktuelle Benutzer-ID
+// Get the current user ID
 $currentUserId = $_SESSION['userId'];
 
-// Fügen Sie alle Einträge der aktuellen Benutzer-ID aus der `shoppingCart` Tabelle in die `history` Tabelle ein
+// Insert all entries for the current user from `shoppingCart` into the `history` table
 $sql = "INSERT INTO history (timestamp, amount, userID, productID, transactionID)
         SELECT CURRENT_TIMESTAMP, amount, userID, productID, $last_id
         FROM shoppingCart
         WHERE userID = $currentUserId";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Einträge erfolgreich in die History-Tabelle verschoben.";
+    echo "Entries successfully moved into the history table.";
 } else {
-    echo "Fehler beim Verschieben der Einträge: " . $conn->error;
+    echo "Error while moving entries: " . $conn->error;
 }
 
 $sql = "SELECT productID, amount FROM shoppingCart WHERE userID = $currentUserId";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    // Durchlaufen Sie alle zurückgegebenen Zeilen
+    // Loop through all returned rows
     while ($row = $result->fetch_assoc()) {
         $productID = $row['productID'];
         $amount = $row['amount'];
 
-        // Aktualisieren Sie den Lagerbestand in der `products`-Tabelle
+        // Update stock in the `products` table
         $sql = "UPDATE products SET stock = stock - $amount WHERE productID = $productID";
         if ($conn->query($sql) === TRUE) {
-            echo "Lagerbestand erfolgreich aktualisiert.";
+            echo "Stock updated successfully.";
         } else {
-            echo "Fehler beim Aktualisieren des Lagerbestands: " . $conn->error;
+            echo "Error while updating stock: " . $conn->error;
         }
     }
 } else {
-    echo "Keine Einträge in der ShoppingCart-Tabelle für den aktuellen Benutzer.";
+    echo "No entries found in the shopping cart table for the current user.";
 }
 
-
-// Löschen Sie die Daten aus der `shoppingCart` Tabelle für den aktuellen Benutzer
+// Delete data from the `shoppingCart` table for the current user
 $sql = "DELETE FROM shoppingCart WHERE userID = $currentUserId";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Einträge erfolgreich aus der ShoppingCart-Tabelle gelöscht.";
+    echo "Entries successfully deleted from the shopping cart table.";
 } else {
-    echo "Fehler beim Löschen der Einträge: " . $conn->error;
+    echo "Error while deleting entries: " . $conn->error;
 }
 
 require '../mailer/mailer_checkout.php';
 sendConfirmationMail($orderNumber, $versandart, $last_id, $betrag, $name, $email);
 
 header('Location: ../../views/thankyou.php');
-
-
-
-
-
 ?>

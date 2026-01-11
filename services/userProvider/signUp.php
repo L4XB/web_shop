@@ -1,7 +1,6 @@
 <?php
 require '2FA.php';
 
-
 function generatePassword()
 {
     $length = 10;
@@ -52,7 +51,6 @@ function getScreenResolution()
     }
 }
 
-
 function createUser($email, $password, $firstName, $lastName)
 {
     $servername = "localhost";
@@ -87,6 +85,7 @@ function createUser($email, $password, $firstName, $lastName)
     // Prepare and bind
     $stmt = $conn->prepare("INSERT INTO users (email, passwort, firstName, lastName, lastLogin, screenResolution, os, twoFASecret, use2Fa, isFirstLogin, createdAt, is_logged_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, false, true, ?,true)");
     $stmt->bind_param("sssssssss", $email, $hashedPassword, $lastName, $firstName, $currentTimestamp, $getScreenResolution, $getCurrentOS, $twoFASecret, $currentTimestamp);
+
     try {
         if ($stmt->execute()) {
             echo "New user created successfully.";
@@ -112,21 +111,14 @@ function createUser($email, $password, $firstName, $lastName)
                 $_SESSION['userId'] = $idRow['userID'];
             }
 
-            //Hier
+            // Continue here
         } else {
-
             echo "Error creating user: " . $stmt->error;
         }
     } catch (Exception $e) {
         header('Location: ../../views/error.php');
     }
-    // Execute statement
-
-
-
-    // Close statement and connection
 
     $stmt->close();
     $conn->close();
 }
-

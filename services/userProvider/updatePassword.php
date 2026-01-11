@@ -8,13 +8,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dbpassword = "";
     $dbname = "webShopFSI";
 
-    // Erstellen der Verbindung
+    // Create the connection
     $conn = new mysqli($servername, $username, $dbpassword, $dbname);
 
-    // Überprüfen der Verbindung
+    // Check the connection
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
+
     $password = $_POST['password'];
     $confirmPassword = $_POST['passwordSe'];
 
@@ -22,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedPassword = hash('sha512', $password);
         session_start();
         $_SESSION['loggedIn'] = true;
+
         $mail = $_SESSION['email'];
         $sql = "UPDATE users SET passwort = ? WHERE email = ?";
         $stmt = $conn->prepare($sql);
@@ -33,15 +35,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("s", $mail);
         $stmt->execute();
 
-
-        echo "Passwort erfolgreich aktualisiert.";
+        echo "Password updated successfully.";
         if (is2FAEnabled()) {
             header('Location: ../../views/check_2fa.php');
         } else {
             header('Location: ../../views/homepage.php');
         }
     } else {
-        echo "Die Passwörter stimmen nicht überein.";
+        echo "The passwords do not match.";
     }
 }
 ?>
