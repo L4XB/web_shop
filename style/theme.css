@@ -163,3 +163,89 @@ th{
 .navbar .nav-link:hover{
   color: #f3ede6 !important;
 }
+
+/* ===============================
+   FORCE LOGIN BUTTON COLORS
+   =============================== */
+
+/* Botones amarillos -> marrón */
+.btn-warning,
+button.btn-warning,
+input.btn-warning{
+  background-color: var(--primary) !important;
+  border-color: rgba(107,79,58,0.4) !important;
+  color: #fff !important;
+}
+
+/* Hover */
+.btn-warning:hover,
+button.btn-warning:hover,
+input.btn-warning:hover{
+  background-color: var(--primary-2) !important;
+}
+
+/* Outline warning -> outline marrón */
+.btn-outline-warning,
+button.btn-outline-warning,
+input.btn-outline-warning{
+  color: var(--primary) !important;
+  border-color: rgba(107,79,58,0.45) !important;
+}
+
+/* Hover outline */
+.btn-outline-warning:hover,
+button.btn-outline-warning:hover,
+input.btn-outline-warning:hover{
+  background-color: rgba(107,79,58,0.12) !important;
+  color: var(--primary) !important;
+}
+
+/* ===============================
+   Login page (standalone) styling
+   =============================== */
+
+body{
+  font-family: var(--font-ui) !important;
+  background: var(--bg) !important;
+}
+
+/* Inputs del login */
+#loginForm input{
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--border) !important;
+  padding: 10px 12px;
+}
+
+#loginForm input:focus{
+  border-color: rgba(176,122,75,0.55) !important;
+  box-shadow: 0 0 0 3px rgba(176,122,75,0.25) !important;
+  outline: none;
+}
+
+/* Botones del login (sin clases Bootstrap) */
+#container-left-side-items button,
+#loginForm button{
+  background-color: var(--primary) !important;
+  color: #fff !important;
+  border: 1px solid rgba(107,79,58,0.4) !important;
+  border-radius: 999px !important;
+  padding: 10px 16px;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+#container-left-side-items button:hover,
+#loginForm button:hover{
+  background-color: var(--primary-2) !important;
+}
+
+/* Botón "abbrechen" si quieres que sea secundario */
+#container-left-side-items .backHome{
+  background-color: transparent !important;
+  color: var(--primary) !important;
+  border: 1px solid rgba(107,79,58,0.55) !important;
+  box-shadow: none !important;
+}
+
+#container-left-side-items .backHome:hover{
+  background-color: rgba(107,79,58,0.12) !important;
+}
