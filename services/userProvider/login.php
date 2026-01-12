@@ -2,9 +2,10 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 function isFirstLogin($email)
 {
-    //Server Connection
+    // Server connection
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -13,7 +14,7 @@ function isFirstLogin($email)
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
     $sql = "SELECT isFirstLogin FROM users WHERE email = ?";
@@ -24,9 +25,10 @@ function isFirstLogin($email)
     $user = $result->fetch_assoc();
     return $user['isFirstLogin'] == 1;
 }
+
 function setFirstLoginToFalse($email)
 {
-    //Server Connection
+    // Server connection
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -35,30 +37,30 @@ function setFirstLoginToFalse($email)
     $conn = new mysqli($servername, $username, $password, $dbname);
 
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
-    // Vorbereiten und Binden
+    // Prepare and bind
     $stmt = $conn->prepare("UPDATE users SET isFirstLogin = false WHERE email = ?");
     $stmt->bind_param("s", $email);
 
-    // Ausführen der Anweisung
+    // Execute the statement
     $stmt->execute();
 
-    // Überprüfen, ob das Update erfolgreich war
+    // Check whether the update was successful
     if ($stmt->affected_rows === 0) {
-        exit('Keine Zeilen aktualisiert');
+        exit('No rows were updated');
     } else {
-        echo 'Das Feld isFirstLogin wurde erfolgreich auf false gesetzt';
+        echo 'The isFirstLogin field was successfully set to false';
     }
 
     $stmt->close();
     $conn->close();
 }
 
-
 include '2fa.php';
-//Server Connection
+
+// Server connection
 $servername = "localhost";
 $usernamed = "root";
 $password = "";
@@ -67,7 +69,7 @@ $dbname = "webShopFSI";
 $conn = new mysqli($servername, $usernamed, $password, $dbname);
 
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -77,38 +79,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = hash('sha512', $password);
     $_SESSION['alert'] = "Hash: " . $hashedPassword . "  Clear: " . $password;
 
-    // Vorbereiten und Binden
+    // Prepare and bind
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND passwort = ?");
     $stmt->bind_param("ss", $username, $hashedPassword);
 
-    // Ausführen der Anweisung
+    // Execute the statement
     $stmt->execute();
 
-    // Ergebnis abrufen
+    // Fetch result
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $_SESSION['userId'] = $user['userID'];
         $_SESSION['loggedIn'] = true;
+
         $servername = "localhost";
         $usernamed = "root";
         $password = "";
         $dbname = "webShopFSI";
+
         $_SESSION['email'] = $username;
         $userid = $_SESSION['userId'];
         $_SESSION['previous_page'] = "login";
+
         $conn = new mysqli($servername, $usernamed, $password, $dbname);
 
-
-        // Überprüfen Sie, ob die Verbindung erfolgreich war
+        // Check if the connection was successful
         if ($conn->connect_error) {
-            die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+            die("Connection failed: " . $conn->connect_error);
         }
+
         $stmt = $conn->prepare("UPDATE users SET is_logged_in = 1 WHERE userID = ?");
 
         if ($stmt === false) {
-            die("Fehler bei der Vorbereitung der SQL-Anweisung: " . $conn->error);
+            die("Error preparing SQL statement: " . $conn->error);
         }
 
         $stmt->bind_param("i", $userid);
@@ -120,9 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->bind_param("ss", $currentTimestamp, $username);
         $updateStmt->execute();
         $updateStmt->close();
-
-
-
 
         $_SESSION['name'] = $user['firstName'];
         $_SESSION['firstName'] = $user['firstName'];
@@ -149,10 +151,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ../../views/error.php');
     }
 
-
-
-    // Schließen der Anweisung und der Verbindung
+    // Close the statement
     $stmt->close();
 }
+
 $conn->close();
 ?>

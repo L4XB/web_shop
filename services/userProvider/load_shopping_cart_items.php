@@ -4,14 +4,14 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Stellen Sie sicher, dass die Benutzer-ID in der Session gespeichert ist
+// Make sure the user ID is stored in the session
 if (!isset($_SESSION['userId'])) {
-    die("Benutzer-ID nicht gefunden");
+    die("User ID not found");
 }
 
 $userId = $_SESSION['userId'];
 
-// Serververbindung
+// Server connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -20,10 +20,10 @@ $dbname = "webShopFSI";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// SQL-Abfrage, um die Produkte zu laden und doppelte Einträge zusammenzufassen
+// SQL query to load products and merge duplicate entries
 $sql = "SELECT p.productName, p.description, p.price, s.productID, p.pathName, SUM(s.amount) as amount 
         FROM shoppingCart s 
         JOIN products p ON s.productID = p.productID
@@ -33,9 +33,10 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
+
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Hier können Sie den HTML-Code für jedes Produkt ausgeben
+        // Here you can output the HTML code for each product
         echo '<div class="row">';
         echo '<div class="col-2"></div>';
         echo '<div class="col-1" style="justify-content: center; align-items: center; display: flex; border-bottom: solid; border-width:thin; border-color: lightgrey;">';
@@ -66,20 +67,19 @@ if ($result->num_rows > 0) {
         echo '</div>';
         echo '<div class="col-2"></div>';
         echo '</div>';
-
-
     }
+
     echo '<div class="row container-fluid justify-content-end" style="margin-top:40px;padding-right:190px;">
     <div class="col-3">
-        <button type="button" class="btn btn-warning" onclick="window.location.href = \'checkout.php\';">weiter
-            zur Kasse</button>
+        <button type="button" class="btn btn-warning" onclick="window.location.href = \'checkout.php\';">Proceed
+            to checkout</button>
     </div>
 </div>';
 
 } else {
-    echo '<p style="text-align:center;">Keine Produkte im Warenkorb. </p>
+    echo '<p style="text-align:center;">No products in the shopping cart.</p>
     <p style="text-align:center;"><small class="d-block text-right mt-3">
-      <a href="products.php" class="btn btn-outline-dark">Artikel hinzufügen</a>
+      <a href="products.php" class="btn btn-outline-dark">Add items</a>
     </small></div></p>';
 }
 
@@ -125,7 +125,7 @@ $conn->close();
                 success: function (response) {
 
                     if (amount == 0) {
-                        location.reload(); // Aktualisieren Sie die Seite, um die Änderungen anzuzeigen
+                        location.reload(); // Refresh the page to show the changes
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

@@ -6,14 +6,21 @@
     <meta name="signUp" content="width=device-width, initial-scale=1.0">
     <title>SignUp</title>
 
-    <!--Style-->
-    <link rel="stylesheet" href="../style/signUp.css">
-    <link rel="stylesheet" href="../style/login.css">
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/icons/favicon-192x192.ico">
 
-    <!--Scripts-->
+    <!-- Page CSS (layout específico) -->
+    <link rel="stylesheet" href="../style/signUp.css">
+    <link rel="stylesheet" href="../style/login.css">
+
+    <!-- Global theme (colores, tipografía, botones) -->
+    <!-- IMPORTANTE: al final para que sobrescriba el amarillo -->
+    <link rel="stylesheet" href="../style/theme.css">
+
+    <!-- Scripts -->
     <script src="../scripts/navigation.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script>
         $(document).ready(function () {
             $('#signUpForm').on('submit', function (e) {
@@ -33,40 +40,41 @@
                 });
             });
         });
-
-
     </script>
 </head>
 
 <body>
     <div class="container-body">
-        <!--left Side-->
-        <!--left Side-->
+        <!-- Left Side -->
         <div id="container-left-side">
             <div id="container-left-side-items">
                 <form id="signUpForm" method="post" action="../mailer.php">
                     <h1>Account erstellen</h1>
+
                     <div class="form-field">
                         <label for="email">E-Mail:</label>
                         <input placeholder="Geben Sie Ihre E-mail ein" style="width: 200%;" type="email" id="email"
                             name="email" required>
                     </div>
+
                     <br>
+
                     <div class="form-row">
                         <div class="form-field">
                             <label for="firstName">Vorname:</label>
                             <input placeholder="Geben Sie Ihren Vornamen ein" type="text" id="firstName"
                                 name="firstName" style="width: 90%;" required>
                         </div>
-                        <div class="form-field">
 
+                        <div class="form-field">
                             <label for="lastName">Nachname:</label>
                             <input placeholder="Geben Sie Ihren Nachnamen ein" type="text" id="lastName" name="lastName"
                                 style="width: 90%;" required>
                         </div>
-
                     </div>
+
                     <br>
+
                     <div class="form-row">
                         <div class="form-field">
                             <label for="password">Telefonnummer:</label>
@@ -74,15 +82,20 @@
                                 name="phoneNumber" style="width: 200%;" required>
                         </div>
                     </div>
+
                     <br>
+
                     <div id="emailError" style="color: red;text-align:center;"></div>
+
                     <br>
+
                     <div class="form-row">
                         <button class="backHome" onclick="window.location.href='homepage.php'">abbrechen</button>
                         <button class="weiter" name="submit" type="submit">Weiter</button>
                     </div>
 
                     <hr class="thin-black-line">
+
                     <div id="bottom-options">
                         <p>Sie haben schon einen Account?</p>
                         <a style="text-decoration: none;" href="login.php">
@@ -90,10 +103,10 @@
                         </a>
                     </div>
                 </form>
-
             </div>
         </div>
-        <!--right Side-->
+
+        <!-- Right Side -->
         <div id="container-right-side">
             <img height="550px" src="../assets/images/inf-logo.png" alt="">
         </div>

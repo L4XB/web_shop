@@ -2,10 +2,10 @@
 
 function updateVerificationStatus()
 {
-    // Starten der Session
+    // Start the session
     session_start();
 
-    // Abrufen der E-Mail-Adresse aus der Session
+    // Retrieve the email address from the session
     $email = $_SESSION['emailUser'];
 
     $servername = "localhost";
@@ -13,26 +13,26 @@ function updateVerificationStatus()
     $dbpassword = "";
     $dbname = "webshop";
 
-    // Erstellen der Verbindung
+    // Create the connection
     $conn = new mysqli($servername, $username, $dbpassword, $dbname);
 
-    // Überprüfen der Verbindung
+    // Check the connection
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
-    // Vorbereiten und Binden
+    // Prepare and bind
     $stmt = $conn->prepare("UPDATE users SET isVerified = 'true' WHERE email = ?");
     $stmt->bind_param("s", $email);
 
-    // Ausführen der Anweisung
+    // Execute the statement
     if ($stmt->execute()) {
         echo "Verification status updated successfully.";
     } else {
         echo "Error updating verification status: " . $stmt->error;
     }
 
-    // Schließen der Anweisung und der Verbindung
+    // Close the statement and the connection
     $stmt->close();
     $conn->close();
 }

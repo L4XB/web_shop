@@ -6,26 +6,26 @@ function updateVerificationCode($code, $email)
     $password = "";
     $dbname = "webShopFSI";
 
-    // Erstellen der Verbindung
+    // Create the database connection
     $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Überprüfen der Verbindung
+    // Check the connection
     if ($conn->connect_error) {
-        die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
-    // Vorbereiten und Binden
+    // Prepare and bind
     $stmt = $conn->prepare("UPDATE users SET verificationCode = ? WHERE email = ?");
     $stmt->bind_param("ss", $code, $email);
 
-    // Ausführen der Anweisung
+    // Execute the statement
     if ($stmt->execute()) {
         echo "Verification code updated successfully.";
     } else {
         echo "Error updating verification code: " . $stmt->error;
     }
 
-    // Schließen der Anweisung und der Verbindung
+    // Close the statement and the connection
     $stmt->close();
     $conn->close();
 }

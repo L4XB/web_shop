@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 include 'login.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Extrahieren der Daten aus den Textfeldern
+    // Extract data from the input fields
     $numberOne = $_POST['numberOne'];
     $numberTwo = $_POST['numberTwo'];
     $numberThree = $_POST['numberThree'];
@@ -12,18 +12,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numberFive = $_POST['numberFive'];
     $numberSix = $_POST['numberSix'];
 
-    // Zusammenfügen der Daten zu einem Code
+    // Combine the data into a single code
     $code = $numberOne . $numberTwo . $numberThree . $numberFour . $numberFive . $numberSix;
     $secret = get2FASecret();
-    // Überprüfen des Codes mit der Methode isCodeValid
-    if (isCodeValid($secret, $code)) {
-        // Wenn der Code gültig ist, leiten Sie auf die Homepage um
 
+    // Verify the code using the isCodeValid method
+    if (isCodeValid($secret, $code)) {
+        // If the code is valid, redirect to the homepage
 
         $_SESSION['2FAAktiv'] = true;
         enable2FA();
         session_start();
         $_SESSION['previous_page'] = "login";
+
         $isFirstLogin2 = isFirstLogin($_SESSION['email']);
         if ($isFirstLogin2) {
             header('Location: ../../views/setNewPassword.php');
@@ -33,8 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         exit;
     } else {
-        // Wenn der Code ungültig ist, geben Sie eine Fehlermeldung aus
-        echo "Der eingegebene Code ist ungültig.";
+        // If the code is invalid, display an error message
+        echo "The entered code is invalid.";
     }
 }
 ?>
